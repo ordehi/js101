@@ -1,0 +1,26 @@
+{
+  "en": {
+    "welcome": "Welcome to the Calculator!",
+    "inputRange": "Input numbers must be greater than 0",
+    "firstNumber": "What is the first number?",
+    "secondNumber": "What is the second number?",
+    "invalidNumber": "That's not a valid number",
+    "chooseOperation": "Choose an operation\n1) Add 2) Subtract 3) Multiply 4) Divide",
+    "operationRange": "Operation must be between 1 and 4",
+    "anotherOperation": "Do you want to perform another operation? [Y/n]",
+    "result": "The result is ",
+    "thankYou": "Thank you for using the calculator!"
+  },
+  "es": {
+    "welcome": "Bienvenido a la Calculadora",
+    "inputRange": "Los numeros de entrada deben ser mayores que 0",
+    "firstNumber": "Entra el primer numero",
+    "secondNumber": "Entra el segundo numero",
+    "invalidNumber": "Ese numero no es valido",
+    "chooseOperation": "Elije una operacion\n1) Suma 2) Resta 3) Multiplica 4) Divide",
+    "operationRange": "Elije una operacion entre 1 y 4",
+    "anotherOperation": "Quieres realizar otra operacion? [Y/n]",
+    "result": "El resultado es ",
+    "thankYou": "Gracias por usar la Calculadora"
+  }
+}

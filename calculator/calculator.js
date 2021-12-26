@@ -1,4 +1,7 @@
 const rlSync = require('readline-sync');
+const MESSAGES = require('./messages.json');
+const LANGUAGE = 'en';
+const LOCAL_MESSAGES = MESSAGES[LANGUAGE];
 
 const mathOperations = {
   1: (x, y) => x + y,
@@ -14,47 +17,44 @@ const prompt = (msg) => console.log(`=> ${msg}`);
 const separator = () => console.log('---------------------------------------');
 
 const loopForNumber = (numberOrder) => {
-  let number = askAndStore(`What is the ${numberOrder} number?`) * 1;
+  let number = askAndStore(LOCAL_MESSAGES[numberOrder]) * 1;
   while (isNaNOrZero(number)) {
-    number = askAndStore("That's not a valid number!") * 1;
+    number = askAndStore(LOCAL_MESSAGES.invalidNumber) * 1;
   }
   return number;
 };
 
 const loopForOperation = () => {
-  let chosenOperation = askAndStore(
-    'Choose an operation\n1) Add 2) Subtract 3) Multiply 4) Divide'
-  );
+  let chosenOperation = askAndStore(LOCAL_MESSAGES.chooseOperation);
   while (chosenOperation < 1 || chosenOperation > 4) {
-    chosenOperation = askAndStore('Operation must be between 1 and 4');
+    chosenOperation = askAndStore(LOCAL_MESSAGES.operationRange);
   }
   return chosenOperation;
 };
 
 separator();
-prompt('Welcome to the Calculator!');
-prompt('Input numbers must be greater than 0');
+prompt(LOCAL_MESSAGES.welcome);
+prompt(LOCAL_MESSAGES.inputRange);
 separator();
 
 const calculator = () => {
-  let number1 = loopForNumber('first');
-  let number2 = loopForNumber('second');
+  let number1 = loopForNumber('firstNumber');
+  let number2 = loopForNumber('secondNumber');
   let chosenOperation = loopForOperation();
 
   let result = mathOperations[chosenOperation](number1, number2);
 
-  prompt(`The result is ${result}`);
+  prompt(LOCAL_MESSAGES.result + result);
 };
 
 const startContinueOrExit = (continueOrExit) => {
   while (continueOrExit.toLowerCase() === 'y') {
     calculator();
-    continueOrExit =
-      askAndStore('Do you want to perform another operation? [Y/n]') || 'y';
+    continueOrExit = askAndStore(LOCAL_MESSAGES.anotherOperation) || 'y';
   }
 };
 
 startContinueOrExit('y');
 
 separator();
-prompt('Thank you for using the calculator!');
+prompt(MESSAGES.thankYou);
