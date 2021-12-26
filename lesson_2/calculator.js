@@ -9,48 +9,52 @@ const mathOperations = {
 
 const isNaNOrZero = (number) => isNaN(number) || number === 0;
 
-console.log('Welcome to the Calculator!');
-console.log('Input numbers must be greater than 0');
-console.log('--------------------------------------------');
+const askAndStore = (msg) => rlSync.question(`=> ${msg}\n`);
+const prompt = (msg) => console.log(`=> ${msg}`);
+const separator = () => console.log('---------------------------------------');
+
+const loopForNumber = (numberOrder) => {
+  let number = askAndStore(`What is the ${numberOrder} number?`) * 1;
+  while (isNaNOrZero(number)) {
+    number = askAndStore("That's not a valid number!") * 1;
+  }
+  return number;
+};
+
+const loopForOperation = () => {
+  let chosenOperation = askAndStore(
+    'Choose an operation\n1) Add 2) Subtract 3) Multiply 4) Divide'
+  );
+  while (chosenOperation < 1 || chosenOperation > 4) {
+    chosenOperation = askAndStore('Operation must be between 1 and 4');
+  }
+  return chosenOperation;
+};
+
+separator();
+prompt('Welcome to the Calculator!');
+prompt('Input numbers must be greater than 0');
+separator();
 
 const calculator = () => {
-  let number1 = 0;
-  while (isNaNOrZero(number1)) {
-    number1 = rlSync.question('What is the first number?\n=> ') * 1;
-  }
-
-  let number2 = 0;
-  while (isNaNOrZero(number2)) {
-    number2 = rlSync.question('What is the second number?\n=> ') * 1;
-  }
-
-  let chosenOperation = 0;
-  while (chosenOperation < 1 || chosenOperation > 4) {
-    chosenOperation = rlSync.question(
-      'Choose an operation\n1) Add 2) Subtract 3) Multiply 4) Divide\n=> '
-    );
-  }
+  let number1 = loopForNumber('first');
+  let number2 = loopForNumber('second');
+  let chosenOperation = loopForOperation();
 
   let result = mathOperations[chosenOperation](number1, number2);
 
-  console.log(`The result is ${result}`);
+  prompt(`The result is ${result}`);
 };
 
-let continueOrExit = '1';
-
-while (continueOrExit === '1') {
-  calculator();
-
-  continueOrExit =
-    rlSync.question('Do you want to perform another operation?\nY/n\n=> ') ||
-    'y';
-
-  if (continueOrExit && continueOrExit.toLocaleLowerCase() === 'y') {
-    continueOrExit = '1';
-  } else {
-    continueOrExit = '2';
+const startContinueOrExit = (continueOrExit) => {
+  while (continueOrExit.toLowerCase() === 'y') {
+    calculator();
+    continueOrExit =
+      askAndStore('Do you want to perform another operation? [Y/n]') || 'y';
   }
-}
+};
 
-console.log('-----------------------------------');
-console.log('Thank you for using the calculator!');
+startContinueOrExit('y');
+
+separator();
+prompt('Thank you for using the calculator!');
