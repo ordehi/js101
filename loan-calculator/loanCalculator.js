@@ -5,7 +5,7 @@ const askUserForInput = (message) =>
   readline.question('>> ' + message + '\n?? ');
 
 const getStringMakeNumber = (message) => {
-  let numFromStr = Number(askUserForInput(message));
+  let numFromStr = Number(askUserForInput(message).trim());
   while (isNaN(numFromStr) || numFromStr < 0) {
     numFromStr = Number(askUserForInput(MESSAGES.validNumber));
   }
