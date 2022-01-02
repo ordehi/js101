@@ -1,5 +1,12 @@
 # Mortgage / Car Loan Calculator
 
+To run:
+
+```
+npm i
+node loanCalculator.js
+```
+
 Take everything that you've learned so far and build a mortgage calculator (or car payment calculator -- it's the same thing).
 
 You'll need three pieces of information:

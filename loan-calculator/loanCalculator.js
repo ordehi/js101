@@ -67,26 +67,22 @@ const getYesOrNoTo = (message) => {
   return yesOrNo === 'y';
 };
 
-const programLifecycle = () => {
+display(SEPARATOR);
+display(MESSAGES.welcome);
+
+while (true) {
   display(SEPARATOR);
-  display(MESSAGES.welcome);
-
-  while (true) {
-    display(SEPARATOR);
-    let loanData = getLoanDataFromUser();
-    let loan = computeLoan(loanData);
-    buildLoanMsg(loan);
-    updateHistory(loan);
-    display(loan.message);
-    display(SEPARATOR);
-
-    if (!getYesOrNoTo(MESSAGES.goAgain)) break;
-  }
-
-  console.clear();
-  if (getYesOrNoTo(MESSAGES.showHistory)) displayHistory();
+  let loanData = getLoanDataFromUser();
+  let loan = computeLoan(loanData);
+  buildLoanMsg(loan);
+  updateHistory(loan);
+  display(loan.message);
   display(SEPARATOR);
-  display(MESSAGES.thankYou);
-};
 
-programLifecycle();
+  if (!getYesOrNoTo(MESSAGES.goAgain)) break;
+}
+
+console.clear();
+if (getYesOrNoTo(MESSAGES.showHistory)) displayHistory();
+display(SEPARATOR);
+display(MESSAGES.thankYou);
