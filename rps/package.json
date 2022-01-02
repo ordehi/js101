@@ -1,0 +1,15 @@
+{
+  "name": "rps",
+  "version": "1.0.0",
+  "description": "In this assignment, we'll build a Rock Paper Scissors game. Rock Paper Scissors is a simple game played between two opponents. Both the opponents choose an item from rock, paper, and scissors. The winner is decided according to the following rules:",
+  "main": "rps.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
