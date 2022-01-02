@@ -1,62 +1,92 @@
 const readline = require('readline-sync');
 const MESSAGES = require('./messages.json');
+const SEPARATOR = '------------------------------';
+const HISTORY = {};
+let timesRun = 0;
 
-const askUserForInput = (message) =>
-  readline.question('>> ' + message + '\n?? ');
+const getUserInput = (message) => readline.question('>> ' + message + '\n>> ');
 
-const getStringMakeNumber = (message) => {
-  let numFromStr = Number(askUserForInput(message).trim());
-  while (isNaN(numFromStr) || numFromStr < 0) {
-    numFromStr = Number(askUserForInput(MESSAGES.validNumber));
+const getValidNumberFromUser = (message) => {
+  let numFromStr = Number(getUserInput(message).trim());
+  while (isNaN(numFromStr) || numFromStr <= 0) {
+    numFromStr = Number(getUserInput(MESSAGES.validNumber).trim());
   }
   return numFromStr;
 };
 
-const say = (message) => console.log(message);
-
-const separator = () => console.log('------------------------------');
-
-// let years = getNumberFromUser('Enter years');
-
-const calculateMonthlyRate = (annualRate, loanDurationMonths) =>
-  annualRate / loanDurationMonths / 100;
-
-const calculateMonthlyPayment = (loanAmount, monthlyRate, loanDurationMonths) =>
-  loanAmount *
-  (monthlyRate / (1 - Math.pow(1 + monthlyRate, -loanDurationMonths)));
-
-// const yearsToMonths = (years) => Math.ceil(years * 12);
-
-const loanCalculator = (loanAmount, annualRate, loanDurationMonths) => {
-  // let loanDurationMonths = yearsToMonths(years);
-  let monthlyRate = calculateMonthlyRate(annualRate, loanDurationMonths);
-  let monthlyPayment = calculateMonthlyPayment(
-    loanAmount,
-    monthlyRate,
-    loanDurationMonths
-  );
-
-  console.log(`Your monthly payment is $${monthlyPayment.toFixed(2)}.`);
-  separator();
-  // console.log(`The monthly interest rate is ${monthlyRate.toFixed(4)}`);
+const updateHistory = (loan) => {
+  timesRun += 1;
+  HISTORY[timesRun] = loan;
 };
 
-const programLifecycle = (continueOrExit) => {
-  say(MESSAGES.welcome);
-  separator();
+const display = (message) => console.log(message);
 
-  while (continueOrExit === true) {
-    let loanAmount = getStringMakeNumber(MESSAGES.loan);
-    let annualRate = getStringMakeNumber(MESSAGES.annualRate);
-    let loanDurationMonths = getStringMakeNumber(MESSAGES.monthDuration);
+const displayHistory = () => {
+  display(SEPARATOR);
+  display('Loan History');
+  display(SEPARATOR);
+  console.dir(HISTORY);
+};
 
-    loanCalculator(loanAmount, annualRate, loanDurationMonths);
+const computeMonthRate = (annualRate, loanMonthDuration) =>
+  annualRate / loanMonthDuration / 100;
 
-    continueOrExit =
-      askUserForInput(MESSAGES.anotherCalc).toLowerCase() === 'y';
+const computeMonthPayment = (loanAmount, monthRate, loanMonthDuration) =>
+  loanAmount * (monthRate / (1 - Math.pow(1 + monthRate, -loanMonthDuration)));
+
+const getLoanDataFromUser = () => {
+  return {
+    amount: getValidNumberFromUser(MESSAGES.loan),
+    annualRate: getValidNumberFromUser(MESSAGES.annualRate),
+    months: getValidNumberFromUser(MESSAGES.monthDuration),
+  };
+};
+
+const computeLoan = (loanData) => {
+  let loan = loanData;
+  loan.monthRate = computeMonthRate(loan.annualRate, loan.months);
+  loan.monthPay = computeMonthPayment(loan.amount, loan.monthRate, loan.months);
+
+  return loan;
+};
+
+const buildLoanMsg = (loan) => {
+  loan.message = `${MESSAGES.rate} ${loan.monthRate.toFixed(4)}, ${
+    MESSAGES.pay
+  } $${loan.monthPay.toFixed(2)}`;
+
+  return loan;
+};
+
+const getYesOrNoTo = (message) => {
+  let yesOrNo = getUserInput(message).toLowerCase();
+  while (yesOrNo !== 'y' && yesOrNo !== 'n') {
+    yesOrNo = getUserInput(MESSAGES.enterYOrN).toLowerCase();
   }
-  say(MESSAGES.thankYou);
+
+  return yesOrNo === 'y';
 };
 
-let continueOrExit = true;
-programLifecycle(continueOrExit);
+const programLifecycle = () => {
+  display(SEPARATOR);
+  display(MESSAGES.welcome);
+
+  while (true) {
+    display(SEPARATOR);
+    let loanData = getLoanDataFromUser();
+    let loan = computeLoan(loanData);
+    buildLoanMsg(loan);
+    updateHistory(loan);
+    display(loan.message);
+    display(SEPARATOR);
+
+    if (!getYesOrNoTo(MESSAGES.goAgain)) break;
+  }
+
+  console.clear();
+  if (getYesOrNoTo(MESSAGES.showHistory)) displayHistory();
+  display(SEPARATOR);
+  display(MESSAGES.thankYou);
+};
+
+programLifecycle();
