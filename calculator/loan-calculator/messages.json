@@ -1,9 +1,0 @@
-{
-  "welcome": "Welcome to the Loan Calculator!",
-  "loan": "Enter the loan amount",
-  "annualRate": "Enter the Annual Percentage Rate (APR)",
-  "monthDuration": "Enter loan duration in months",
-  "validNumber": "You must enter a number greater than 0",
-  "anotherCalc": "Would you like to perform another calculation?",
-  "thankYou": "Thank you for using Loan Calculator!"
-}
