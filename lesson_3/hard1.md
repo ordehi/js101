@@ -139,6 +139,23 @@ three is: one
 
 In this case, splice does mutate the original arrays.
 
+### Explanation from TA at Launch
+
+While it's good to know what is meant by pass by reference or pass by value -- it's a good interview question for people seeking junior development positions -- I often find it more confusing than helpful. Instead, I find it more convenient and useful to focus on whether or not mutation occurs by looking for three things:
+
+calling functions that are known to mutate their callers or arguments (like push)
+assignment of a new value to a property of an object (obj.foo = 42)
+assignment to a specific element of an array (arr[1] = 42)
+All 3 of these things are mutating operations. So, what isn't a mutating operation? There are two major things:
+
+calling functions that don't mutate their callers or arguments (like concat)
+using simple assignment to a variable (foo = 42)
+You usually need to read documentation to determine whether a function mutates stuff. There's no way to be sure by just looking at the function invocation unless you can also look at the source for the function.
+
+Assignment is easy, though. If the left hand side is just a variable name, it's non-mutating. If the left hand size includes a property name or an indexing, it's mutating.
+
+The arithmetic assignment operators like += and \*= and the unary ++ and -- operators are like assignment. If applied to a simple variable, it's non-mutating. Otherwise, it's mutating.
+
 ## Question 4
 
 Ben was tasked to write a simple JavaScript function to determine whether an input string is an IP address using 4 dot-separated numbers, e.g., `10.4.5.11`. He is not familiar with regular expressions.
