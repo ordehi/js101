@@ -9,3 +9,5 @@ function substrings(str, sublength) {
 
   return result;
 }
+
+substrings('hello there');
