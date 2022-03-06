@@ -14,7 +14,7 @@ Conditionals are common in selection since the criteria often requires selecting
 💡 When performing a transformation, it's always important to pay attention to whether the original collection is mutated or if a new collection is returned.
 </aside>
 
-## Extracting to Functions
+## Extracting to Functions - Selection
 
 Selection and transformation often lend themselves to extraction into convenience functions given the specificity of the actions performed each time.
 
@@ -93,3 +93,80 @@ WHILE there are unread properties in "produce"
 RETURN result
 
 END
+
+## Extracting to Functions - Transformation
+
+The following function doubles each element in an array (elmenet \* 2) doesn't mutate its argument:
+
+```js
+function doubleNumbers(numbers) {
+  let doubledNums = [];
+  let counter = 0;
+
+  while (counter < numbers.length) {
+    let currentNum = numbers[counter];
+    doubledNums.push(currentNum * 2);
+
+    counter += 1;
+  }
+
+  return doubledNums;
+}
+```
+
+Can you implement it so that it mutates its argument?
+
+### Attempted Solution
+
+```js
+function doubleNumbers(numbers) {
+  let counter = 0;
+
+  while (counter < numbers.length) {
+    numbers[counter] *= 2;
+    counter += 1;
+  }
+
+  return numbers;
+}
+```
+
+When a transformation only transforms a subset of elements in a collection, it is sometimes called an **identity transformation**. Why not just call it a selective transformation? I'd think most people that hear both terms would think of a variant of combining the words "selection" and "transformation"
+
+### Exercise
+
+Reimplement this function:
+
+```js
+function doubleOddNumbers(numbers) {
+  let doubledNums = [];
+
+  for (let counter = 0; counter < numbers.length; counter += 1) {
+    let currentNumber = numbers[counter];
+
+    if (currentNumber % 2 === 1) {
+      doubledNums.push(currentNumber * 2);
+    } else {
+      doubledNums.push(currentNumber);
+    }
+  }
+
+  return doubledNums;
+}
+```
+
+So that it doubles the numbers that have odd indices.
+
+```js
+function isOdd(integer) {
+  return integer % 2 === 1;
+}
+
+function doubleOddIndices(integerArray) {
+  return integerArray.map((integer, currIndex) =>
+    isOdd(currIndex) ? (integer *= 2) : integer
+  );
+}
+```
+
+## More Flexible Functions
