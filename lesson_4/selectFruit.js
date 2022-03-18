@@ -1,33 +1,37 @@
-/* 
-START
-
-# Given a collection of key-value pairs called produce
-
-SET a variable "result" and initialize it to an empty collection
-
-SET a variable "item" and initialize it to the first property name of "produce"
-
-WHILE there are unread properties in "produce"
-
-- if the value of property "item" in "produce" equals 'Fruit' add "item": "value" to "result"
-
-RETURN result
-
-END
-*/
-
 function isObject(input) {
   return Object.prototype.toString.call(input) === '[object Object]';
 }
 
-function selectFruit(object) {
-  let result = {};
+function emptyObjectLiteral() {
+  return {};
+}
 
-  if (isObject(object)) {
-    for (let item in object) {
-      if (produce[item].toLowerCase() === 'fruit') result[item] = produce[item];
+function lowerCase(string) {
+  return string.toLowerCase();
+}
+
+// function selectFruit(produceList) {
+//   let result = {};
+
+//   if (isObject(produceList)) {
+//     for (let currentItem in produceList) {
+//       if (produceList[currentItem].toLowerCase() === 'fruit')
+//         result[currentItem] = produceList[currentItem];
+//     }
+//   }
+
+//   return result;
+// }
+
+function selectProduceByType(produceList, typeToSelect) {
+  if (isObject(produceList) === false) return emptyObjectLiteral();
+  const selectedItems = emptyObjectLiteral();
+
+  for (const currentItem in produceList) {
+    if (lowerCase(produceList[currentItem]) === lowerCase(typeToSelect)) {
+      selectedItems[currentItem] = produceList[currentItem];
     }
   }
 
-  return result;
+  return selectedItems;
 }
