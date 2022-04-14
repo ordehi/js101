@@ -37,3 +37,48 @@ What's happening in this seemingly-simple piece of code? Take it apart and try t
 #### Solution
 
 `Array.prototype.forEach` is being called on a multidimensional array containing two sub-arrays, each sub-array contains two positive integers. At each iteration, we assign the value of the current array to the parameter `arr` and using the callback `arr => console.log(arr[0])` we get the value at index 0 (the first element, `arr[0]`) of the current array using the reference operator `[]`, disregarding any subsequent elements from that array. This prints `1`, `3`, and then returns `undefined` as expected from any call to `forEach`.
+
+### Example 2
+
+```js
+[
+  [1, 2],
+  [3, 4],
+].map((arr) => console.log(arr[0]));
+// 1
+// 3
+// => [undefined, undefined]
+```
+
+### Solution
+
+| Action                      | Performed on                          | Side Effect                               | Return Value                         | Is Return Value Used?                    |
+| --------------------------- | ------------------------------------- | ----------------------------------------- | ------------------------------------ | ---------------------------------------- |
+| method call (`map`)         | outer array                           | None                                      | New array (`[undefined, undefined]`) | No, but shown on line 4                  |
+| callback execution          | Each sub-array                        | None                                      | `undefined`                          | Yes, used by `map` for transformation    |
+| element reference (`[0]`)   | Each sub-array                        | None                                      | Element at index 0 of sub-array      | Yes, used by `console.log`               |
+| method call (`console.log`) | Element at index `0` of the sub-array | Outputs string representation of a Number | `undefined`                          | Yes, used as the callback's return value |
+
+Starting with a multidimensional array which contains two arrays that each contain two integers, we pass the top-level array to `Array.prototype.map`. At each iteration, we're passing each array to the callbackFn to `map` with the argument name `arr` and returning the result of calling `console.log` on the first element in the current array which we get with `arr[0]`. This prints the first element of `arr` to the console, but the return value of `console.log` is always `undefined` and since that's what we're getting returned from the callback to `map` we're building a new array which contains two `undefined` values. It contains two and not four because we're only going through the first value of each sub-array, the array being mapped is the top-level array and not the nested ones.
+
+### Example 3
+
+```js
+[
+  [1, 2],
+  [3, 4],
+].map((arr) => {
+  console.log(arr[0]);
+  return arr[0];
+});
+```
+
+### Solution
+
+| Action                      | Performed on                          | Side Effect                               | Return Value                    | Is Return Value Used?                                  |
+| --------------------------- | ------------------------------------- | ----------------------------------------- | ------------------------------- | ------------------------------------------------------ |
+| method call (`map`)         | outer array                           | None                                      | New array (`[1, 3]`)            | No, but shown on line 5                                |
+| callback execution          | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `map` for transformation                  |
+| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `console.log`                             |
+| method call (`console.log`) | Element at index `0` of the sub-array | Outputs string representation of a Number | `undefined`                     | No                                                     |
+| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used as the return value of the callback function |
