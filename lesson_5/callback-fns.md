@@ -82,3 +82,28 @@ Starting with a multidimensional array which contains two arrays that each conta
 | element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `console.log`                             |
 | method call (`console.log`) | Element at index `0` of the sub-array | Outputs string representation of a Number | `undefined`                     | No                                                     |
 | element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used as the return value of the callback function |
+
+### Example 4
+
+```js
+let myArr = [
+  [18, 7],
+  [3, 12],
+].forEach((arr) => {
+  return arr.map((num) => {
+    if (num > 5) {
+      return console.log(num);
+    }
+  });
+});
+```
+
+### Solution
+
+| Action                      | Performed on                          | Side Effect                               | Return Value                    | Is Return Value Used?                                  |
+| --------------------------- | ------------------------------------- | ----------------------------------------- | ------------------------------- | ------------------------------------------------------ |
+| method call (`forEach`)     | outer array                           | None                                      | `undefined`                     | No, but shown on line 5                                |
+| callback execution          | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `map` for transformation                  |
+| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `console.log`                             |
+| method call (`console.log`) | Element at index `0` of the sub-array | Outputs string representation of a Number | `undefined`                     | No                                                     |
+| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used as the return value of the callback function |
