@@ -100,10 +100,35 @@ let myArr = [
 
 ### Solution
 
-| Action                      | Performed on                          | Side Effect                               | Return Value                    | Is Return Value Used?                                  |
-| --------------------------- | ------------------------------------- | ----------------------------------------- | ------------------------------- | ------------------------------------------------------ |
-| method call (`forEach`)     | outer array                           | None                                      | `undefined`                     | No, but shown on line 5                                |
-| callback execution          | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `map` for transformation                  |
-| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used by `console.log`                             |
-| method call (`console.log`) | Element at index `0` of the sub-array | Outputs string representation of a Number | `undefined`                     | No                                                     |
-| element access (`[0]`)      | Each sub-array                        | None                                      | Element at index 0 of sub-array | Yes, used as the return value of the callback function |
+| Action                              | Performed on                                                       | Side Effect                               | Return Value             | Is Return Value Used?                                |
+| ----------------------------------- | ------------------------------------------------------------------ | ----------------------------------------- | ------------------------ | ---------------------------------------------------- |
+| variable declaration and assignment | nothing                                                            | None                                      | `undefined`              | No                                                   |
+| method call (`forEach`)             | outer array                                                        | None                                      | `undefined`              | Yes, assigned to myArr                               |
+| `forEach` callback execution        | Each sub-array                                                     | None                                      | `[undefined, undefined]` | No                                                   |
+| method call (`map`)                 | Each value of each sub-array                                       | None                                      | `[undefined, undefined]` | Yes, returned by `forEach` callback                  |
+| `map` callback execution            | Each value of each sub-array                                       | None                                      | `undefined`              | Yes, used to transform the array                     |
+| comparison (`num > 5`)              | Each value of each sub-array                                       | None                                      | `true` or `false`        | Yes, evaluated by conditional `if`                   |
+| method call (`console.log`)         | Element of sub-array that passes the conditional check (`num > 5`) | Outputs string representation of a Number | `undefined`              | Yes, to determine the return value of `map` callback |
+
+### Example 5
+
+```js
+[
+  [1, 2],
+  [3, 4],
+].map((arr) => {
+  return arr.map((num) => num * 2);
+});
+```
+
+What will the return value be in this example? Use what you've learned so far to break it down on your own before checking the solution below.
+
+### Solution
+
+| Action                     | Performed on                              | Side Effect | Return Value                                     | Is Return Value Used?                       |
+| -------------------------- | ----------------------------------------- | ----------- | ------------------------------------------------ | ------------------------------------------- |
+| method call (`map`)        | outer array                               | None        | `[[2, 4], [6, 8]]`                               | No, but shown on line 4                     |
+| outer callback execution   | Each sub-array                            | None        | `[2, 4], [6, 8]`                                 | Yes, used by outer `map` for transformation |
+| method call (`map`)        | Each sub-array                            | None        | `[2, 4], [6, 8]`                                 | Yes, returned by outer callback             |
+| inner callback execution   | Element of sub-array at current iteration | None        | A Number that is current element multiplied by 2 | Yes, used by inner `map` for transformation |
+| multiplication (`num * 2`) | Element of sub-array at current iteration | None        | A Number that is current element multiplied by 2 | Yes, returned by inner callback             |
