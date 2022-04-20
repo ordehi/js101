@@ -132,3 +132,116 @@ What will the return value be in this example? Use what you've learned so far to
 | method call (`map`)        | Each sub-array                            | None        | `[2, 4], [6, 8]`                                 | Yes, returned by outer callback             |
 | inner callback execution   | Element of sub-array at current iteration | None        | A Number that is current element multiplied by 2 | Yes, used by inner `map` for transformation |
 | multiplication (`num * 2`) | Element of sub-array at current iteration | None        | A Number that is current element multiplied by 2 | Yes, returned by inner callback             |
+
+### Example 6
+
+```js
+[
+  { a: 'ant', b: 'elephant' },
+  { c: 'cat', d: 'dog' },
+].filter((object) => {
+  return Object.keys(object).every((key) => object[key][0] === key);
+});
+
+// => [ { c: 'cat', d: 'dog' } ]
+```
+
+### Solution
+
+The `filter` method is called on an array of two object literals. Each object is passed to the callback for `filter`. At each iteration, `Object.keys` is used to get the keys of the current object as an array of strings that each represent a key name. A method call to `every` takes into its callback each key of the current object and returns a boolean that is the result of evaluating if the current key is strictly equal as the first letter in the value that the key stores, the value is accessed with `object[key]` and the first character with `[0]`. If the boolean comparison returns `true` for all key-value pairs of the current object, the method call to `every` returns `true` which is then returned by the callback to `filter` and that object is included in the transformed array.
+
+| Action                                 | Performed on                                        | Side Effect | Return Value                                                                                       | Is Return Value Used?                              |
+| -------------------------------------- | --------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| method call (`filter`)                 | Array of objects                                    | None        | A new array containing the objects where all keys match the first character of their stored values | No, but shown on line 4                            |
+| outer callback execution               | Each child object of the outer array                | None        | A Boolean                                                                                          | Yes, used by `filter` for transformation           |
+| method call (`Object.keys`)            | Each child object of the outer array                | None        | An array containing the keys of the object at current iteration                                    | Yes, used by `every`                               |
+| method call (`every`)                  | The array of keys of the current object             | None        | A Boolean                                                                                          | Yes, returned by outer callback                    |
+| inner callback execution               | Each element of the array returned by `Object.keys` | None        | A Boolean                                                                                          | Yes, used by `every` to determine its return value |
+| object property access `object[key]`   | object at current iteration                         | None        | The value of the property at `object[key]`                                                         | Yes, used to extract first character               |
+| string character access by index `[0]` | Value of the property at `object[key]`              | None        | The first character of the value at `object[key]`                                                  | Yes, used in equality comparison                   |
+| strict equality comparison `===`       | first character of value at `object[key]` and `key` | None        | Boolean                                                                                            | Yes, returned by inner callback                    |
+
+### Example 7
+
+```js
+[
+  [8, 13, 27],
+  ['apple', 'banana', 'cantaloupe'],
+].map((arr) => {
+  return arr.filter((item) => {
+    if (typeof item === 'number') {
+      // if it's a number
+      return item > 13;
+    } else {
+      return item.length < 6;
+    }
+  });
+});
+// => [ [ 27 ], [ 'apple' ] ]
+```
+
+### Solution
+
+| Action                               | Performed on                                      | Side Effect | Return Value                                               | Is Return Value Used?                      |
+| ------------------------------------ | ------------------------------------------------- | ----------- | ---------------------------------------------------------- | ------------------------------------------ |
+| method call (`map`)                  | Outer array                                       | None        | A new array                                                | No, but shown on line 10                   |
+| outer callback execution             | Each sub-array                                    | None        | An array of elements extracted from the current array      | Yes, used by `map` for transformation      |
+| method call (`filter`)               | Sub-array at current iteration                    | None        | An array that passes the check in `filter`                 | Yes, used by `map` for transformation      |
+| inner callback execution             | Element at current iteration of `filter` = `item` | None        | A Boolean                                                  | Yes, used by `filter` for transformation   |
+| operator applied `typeof`            | `item`                                            | None        | A String representation of the type of the current element | Yes, used for strict equality comparison   |
+| strict equality comparison `===`     | `item`                                            | None        | A Boolean                                                  | Yes, used by `if`                          |
+| comparison `> 13`                    | `item`                                            | None        | A Boolean                                                  | Yes, returned explicitly by inner callback |
+| String property access `item.length` | `item`                                            | None        | A Number representing the length of the String `item`      | Yes, used in comparison                    |
+| comparison `< 6`                     | `item.length`                                     | None        | Boolean                                                    | Yes, returned explicitly by inner callback |
+
+### Example 8
+
+```js
+[
+  [[1], [2], [3], [4]],
+  [['a'], ['b'], ['c']],
+].map((element1) => {
+  return element1.forEach((element2) => {
+    return element2.filter((element3) => {
+      return element3.length > 0;
+    });
+  });
+});
+
+// => [ undefined, undefined ]
+```
+
+### Solution
+
+| Action                                   | Performed on                                                      | Side Effect | Return Value                                                                                       | Is Return Value Used?                         |
+| ---------------------------------------- | ----------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| method call `map`                        | Outer array                                                       | None        | A new array                                                                                        | No, but shown on line 9                       |
+| `map` callback execution                 | Each sub-array of the outer array, one level down                 | None        | `undefined`                                                                                        | Yes, used by `map` for transformation         |
+| method call (`forEach`)                  | Array at current iteration of `map` = `element1`                  | None        | `undefined`                                                                                        | Yes, returned by `map` callback               |
+| `forEach` callback execution             | Sub-array of the array at current iteration of `map` = `element2` | None        | An array                                                                                           | No                                            |
+| method call `filter`                     | `element2`                                                        | None        | An array                                                                                           | No                                            |
+| `filter` callback execution              | Element of the `element2` array = `element3`                      | None        | A Boolean                                                                                          | Yes, used by `filter` for transformation      |
+| String property access `element3.length` | `element3`                                                        | None        | A Number the length of the String `element3` or `undefined` if `element3` is not a String or Array | Yes, used in comparison                       |
+| comparison `> 0`                         | `element3.length`                                                 | None        | Boolean                                                                                            | Yes, returned explicitly by `filter` callback |
+
+### Example 9
+
+```js
+[
+  [
+    [1, 2],
+    [3, 4],
+  ],
+  [5, 6],
+].map((arr) => {
+  return arr.map((elem) => {
+    if (typeof elem === 'number') {
+      // it's a number
+      return elem + 1;
+    } else {
+      // it's an array
+      return elem.map((number) => number + 1);
+    }
+  });
+});
+```
