@@ -158,4 +158,201 @@ function problem8() {
     third: ['jumped'],
     fourth: ['over', 'the', 'lazy', 'dog'],
   };
+
+  let values = Object.values(obj).flat();
+  values.forEach((val) => {
+    console.log(val.replace(/[^aeiou]/g, ''));
+  });
+
+  let vowels = Object.values(obj)
+    .flat()
+    .join()
+    .replace(/[^aeiou]/g, '');
+  console.log(...vowels.split(''));
+}
+
+/* 
+Given the following data structure, return a new array with the same structure, but with the values in each subarray ordered -- alphabetically or numerically as appropriate -- in ascending order.
+*/
+
+function problem9() {
+  let arr = [
+    ['b', 'c', 'a'],
+    [2, 11, -3],
+    ['blue', 'black', 'green'],
+  ];
+
+  return arr.map((el) =>
+    el.slice().sort((a, b) => {
+      if (typeof a === 'string') {
+        // we can also just do sort() without arguments to sort strings
+        return a.localeCompare(b);
+      } else {
+        return a - b;
+      }
+    })
+  );
+}
+
+/* 
+Perform the same transformation of sorting the subarrays we did in the previous exercise with one difference; sort the elements in descending order.
+*/
+
+function problem10() {
+  let arr = [
+    ['b', 'c', 'a'],
+    [2, 11, -3],
+    ['blue', 'black', 'green'],
+  ];
+
+  return arr.map((el) =>
+    el.slice().sort((a, b) => {
+      if (typeof a === 'string') {
+        return b.localeCompare(a);
+      } else {
+        return b - a;
+      }
+    })
+  );
+}
+
+/* 
+Given the following data structure, use the map method to return a new array identical in structure to the original but, with each number incremented by 1. Do not modify the original data structure.
+*/
+
+function problem11() {
+  let arr = [{ a: 1 }, { b: 2, c: 3 }, { d: 4, e: 5, f: 6 }];
+
+  return arr.map((subObj) => {
+    let copyObj = {};
+
+    for (const key in subObj) {
+      copyObj[key] = subObj[key] + 1;
+    }
+
+    return copyObj;
+  });
+}
+
+/* 
+Given the following data structure, use a combination of methods, including filter, to return a new array identical in structure to the original, but containing only the numbers that are multiples of 3.
+ */
+
+function isMultOf3(num) {
+  return num % 3 === 0;
+}
+
+function problem12() {
+  let arr = [[2], [3, 5, 7], [9], [11, 15, 18]];
+
+  return arr.map((subArr) => subArr.filter((num) => isMultOf3(num)));
+}
+
+/* 
+Given the following data structure, sort the array so that the sub-arrays are ordered based on the sum of the odd numbers that they contain.
+*/
+
+function sumOdds(arr) {
+  return arr.reduce((acc, curr) => (curr % 2 === 1 ? acc + curr : acc));
+}
+
+function problem13() {
+  let arr = [
+    [1, 6, 7],
+    [1, 5, 3],
+    [1, 8, 3],
+  ];
+
+  return arr.sort((a, b) => sumOdds(a) - sumOdds(b));
+}
+
+/* 
+Given the following data structure write some code to return an array containing the colors of the fruits and the sizes of the vegetables. The sizes should be uppercase, and the colors should be capitalized.
+*/
+
+function problem14() {
+  let obj = {
+    grape: { type: 'fruit', colors: ['red', 'green'], size: 'small' },
+    carrot: { type: 'vegetable', colors: ['orange'], size: 'medium' },
+    apple: { type: 'fruit', colors: ['red', 'green'], size: 'medium' },
+    apricot: { type: 'fruit', colors: ['orange'], size: 'medium' },
+    marrow: { type: 'vegetable', colors: ['green'], size: 'large' },
+  };
+
+  let arr = [];
+  for (const product in obj) {
+    if (obj[product].type === 'fruit') {
+      arr.push(obj[product].colors.map((el) => capitalize(el)));
+    } else if (obj[product].type === 'vegetable') {
+      arr.push(obj[product].size.toUpperCase());
+    }
+  }
+
+  return arr;
+
+  // launch's solution
+  Object.values(obj).map((attributes) => {
+    if (attributes['type'] === 'fruit') {
+      return attributes['colors'].map((char) => capitalize(char));
+    } else {
+      return attributes['size'].toUpperCase();
+    }
+  });
+}
+
+/* 
+Given the following data structure, write some code to return an array which contains only the objects where all the numbers are even.
+ */
+
+function problem15() {
+  let arr = [
+    { a: [1, 2, 3] },
+    { b: [2, 4, 6], c: [3, 6], d: [4] },
+    { e: [8], f: [6, 10] },
+  ];
+
+  return arr.filter((subObj) =>
+    Object.values(subObj)
+      .flat()
+      .every((val) => val % 2 === 0)
+  );
+}
+
+/* 
+Given the following data structure, write some code that defines an object where the key is the first item in each subarray, and the value is the second.
+*/
+
+function problem16() {
+  let arr = [
+    ['a', 1],
+    ['b', 'two'],
+    ['sea', { c: 3 }],
+    ['D', ['a', 'b', 'c']],
+  ];
+
+  // expected value of object
+  // { a: 1, b: 'two', sea: { c: 3 }, D: [ 'a', 'b', 'c' ] }
+  return Object.fromEntries(arr);
+}
+
+/* 
+A UUID is a type of identifier often used to uniquely identify items, even when some of those items were created on a different server or by a different application. That is, without any synchronization, two or more computer systems can create new items and label them with a UUID with no significant risk of stepping on each other's toes. It accomplishes this feat through massive randomization. The number of possible UUID values is approximately 3.4 X 10E38, which is a huge number. The chance of a conflict is vanishingly small with such a large number of possible values.
+
+Each UUID consists of 32 hexadecimal characters (the digits 0-9 and the letters a-f) represented as a string. The value is typically broken into 5 sections in an 8-4-4-4-12 pattern, e.g., 'f65c57f6-a6aa-17a8-faa1-a67f2dc9fa91'.
+
+Write a function that takes no arguments and returns a string that contains a UUID.
+*/
+function genRandomHex(size) {
+  return [...Array(size)]
+    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .join('');
+}
+function problem17() {
+  let UUIDArr = [];
+  let hexSizes = [8, 4, 4, 4, 12];
+  while (UUIDArr.length < 5) {
+    UUIDArr.push(genRandomHex(hexSizes[UUIDArr.length]));
+  }
+
+  return UUIDArr.join('-');
 }
