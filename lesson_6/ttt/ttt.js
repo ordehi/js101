@@ -35,9 +35,9 @@ function printPlayable(first, second, third) {
   print(`  ${first}  |  ${second}  |  ${third}`);
 }
 
-function drawLine() {
-  print(LINE);
-}
+// function drawLine() {
+//   print(LINE);
+// }
 
 function print(message) {
   return console.log(message);
@@ -47,17 +47,17 @@ function prompt(cursor = '=>') {
   return rlSync.prompt(`${cursor}`);
 }
 
-function repeat(fn, iterations = 1, ...fnArgs) {
-  for (let count = 1; count <= iterations; count += 1) {
-    fn(...fnArgs);
-  }
-}
+// function repeat(fn, iterations = 1, ...fnArgs) {
+//   for (let count = 1; count <= iterations; count += 1) {
+//     fn(...fnArgs);
+//   }
+// }
 
 displayBoard(board);
 
 // Ask the player to make a choice
 
-/* Need a function that logs to the console with a prompt 
+/* Need a function that logs to the console with a prompt
 and returns the prompt with the value being the player's choice */
 
 function playerChoosesSquare(board) {
