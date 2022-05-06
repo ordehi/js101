@@ -1,43 +1,42 @@
 const rlSync = require('../../node_modules/readline-sync');
 
-const LANE = '     |     |';
-const LINE = '-----+-----+-----';
-const SPACE = ' ';
+const BOARD_LANE = '     |     |';
+const BOARD_LINE = '-----+-----+-----';
+const EMPTY_SQUARE = ' ';
+const PLAYER_MARKER = 'X';
+const COMPUTER_MARKER = 'O';
 
 let board = initializeBoard();
 
 function initializeBoard() {
   let newBoard = {};
   for (let count = 1; count <= 9; count += 1) {
-    newBoard[count] = SPACE;
+    newBoard[count] = EMPTY_SQUARE;
   }
 
   return newBoard;
 }
 
 function displayBoard(board) {
+  console.clear();
   print('');
-  print(LANE);
+  print(BOARD_LANE);
   printPlayable(board['1'], board['2'], board['3']);
-  print(LANE);
-  print(LINE);
-  print(LANE);
+  print(BOARD_LANE);
+  print(BOARD_LINE);
+  print(BOARD_LANE);
   printPlayable(board['4'], board['5'], board['6']);
-  print(LANE);
-  print(LINE);
-  print(LANE);
+  print(BOARD_LANE);
+  print(BOARD_LINE);
+  print(BOARD_LANE);
   printPlayable(board['7'], board['8'], board['9']);
-  print(LANE);
+  print(BOARD_LANE);
   print('');
 }
 
 function printPlayable(first, second, third) {
   print(`  ${first}  |  ${second}  |  ${third}`);
 }
-
-// function drawLine() {
-//   print(LINE);
-// }
 
 function print(message) {
   return console.log(message);
@@ -47,50 +46,49 @@ function prompt(cursor = '=>') {
   return rlSync.prompt(`${cursor}`);
 }
 
-// function repeat(fn, iterations = 1, ...fnArgs) {
-//   for (let count = 1; count <= iterations; count += 1) {
-//     fn(...fnArgs);
-//   }
-// }
-
 displayBoard(board);
 
-// Ask the player to make a choice
-
-/* Need a function that logs to the console with a prompt
-and returns the prompt with the value being the player's choice */
+function emptySquares(board) {
+  return Object.keys(board).filter((square) => board[square] === EMPTY_SQUARE);
+}
 
 function playerChoosesSquare(board) {
-  print('Choose a square from 1-9, top-left to bottom-right.');
+  let empty = emptySquares(board);
+  print(`Choose a square ${empty}, top-left to bottom-right.`);
+
   let playerChoice = prompt();
+  while (true) {
+    if (empty.includes(playerChoice)) break;
+    print("That's not a valid choice.");
+    playerChoice = prompt();
+  }
 
-  board[playerChoice] = 'X';
+  board[playerChoice] = PLAYER_MARKER;
   print(`Player plays ${playerChoice}`);
-
-  displayBoard(board);
 }
 
 function computerPlays(board) {
-  let computerChoice = null;
+  let empty = emptySquares(board);
+  let randomEmpty = Math.floor(Math.random() * empty.length);
+  let computerChoice = empty[randomEmpty];
 
-  while (
-    computerChoice === null ||
-    ['X', 'O'].includes(board[computerChoice])
-  ) {
-    computerChoice = Math.ceil(Math.random() * 9);
-  }
-
-  board[computerChoice] = 'O';
+  print(board[computerChoice]);
+  board[computerChoice] = COMPUTER_MARKER;
   print(`Computer plays ${computerChoice}`);
-
-  displayBoard(board);
 }
 
-function isBoardFull(board) {
-  return !Object.values(board).includes(' ');
+function boardFull(board) {
+  return emptySquares(board).length === 0;
 }
 
-while (isBoardFull(board) === false) {
+function someoneWon(board) {
+  return false;
+}
+
+while (true) {
   playerChoosesSquare(board);
   computerPlays(board);
+  displayBoard(board);
+
+  if (boardFull(board) || someoneWon(board)) break;
 }
