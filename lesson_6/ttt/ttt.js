@@ -82,7 +82,7 @@ function boardFull(board) {
 }
 
 function someoneWon(board) {
-  return false;
+  return !!getWinner(board);
 }
 
 while (true) {
@@ -91,4 +91,10 @@ while (true) {
   displayBoard(board);
 
   if (boardFull(board) || someoneWon(board)) break;
+}
+
+if (someoneWon(board)) {
+  print(`${getWinner(board)} won!`);
+} else {
+  print("It's a tie!");
 }
