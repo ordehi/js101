@@ -5,8 +5,16 @@ const BOARD_LINE = '-----+-----+-----';
 const EMPTY_SQUARE = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
-
-let board = initializeBoard();
+const WINNING_LINES = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+  [1, 4, 7],
+  [2, 5, 8],
+  [3, 6, 9],
+  [1, 5, 9],
+  [3, 5, 7],
+];
 
 function initializeBoard() {
   let newBoard = {};
@@ -19,6 +27,7 @@ function initializeBoard() {
 
 function displayBoard(board) {
   console.clear();
+  print(`You are ${PLAYER_MARKER}. Computer ${COMPUTER_MARKER}`);
   print('');
   print(BOARD_LANE);
   printPlayable(board['1'], board['2'], board['3']);
@@ -46,15 +55,13 @@ function prompt(cursor = '=>') {
   return rlSync.prompt(`${cursor}`);
 }
 
-displayBoard(board);
-
 function emptySquares(board) {
   return Object.keys(board).filter((square) => board[square] === EMPTY_SQUARE);
 }
 
-function playerChoosesSquare(board) {
+function playerChoosesSquare(board, moves) {
   let empty = emptySquares(board);
-  print(`Choose a square ${empty}, top-left to bottom-right.`);
+  print(`Choose a square ${empty.join(', ')}, top-left to bottom-right.`);
 
   let playerChoice = prompt();
   while (true) {
@@ -64,16 +71,18 @@ function playerChoosesSquare(board) {
   }
 
   board[playerChoice] = PLAYER_MARKER;
+  moves.player.push(Number(playerChoice));
   print(`Player plays ${playerChoice}`);
 }
 
-function computerPlays(board) {
+function computerPlays(board, moves) {
   let empty = emptySquares(board);
   let randomEmpty = Math.floor(Math.random() * empty.length);
   let computerChoice = empty[randomEmpty];
 
   print(board[computerChoice]);
   board[computerChoice] = COMPUTER_MARKER;
+  moves.computer.push(Number(computerChoice));
   print(`Computer plays ${computerChoice}`);
 }
 
@@ -81,20 +90,63 @@ function boardFull(board) {
   return emptySquares(board).length === 0;
 }
 
-function someoneWon(board) {
-  return !!getWinner(board);
+function winningLineIn(line, moves) {
+  return line.every((square) => moves.includes(square));
+}
+
+function getWinner(moves) {
+  for (const line of WINNING_LINES) {
+    if (winningLineIn(line, moves.player)) {
+      return 'Player';
+    } else if (winningLineIn(line, moves.computer)) {
+      return 'Computer';
+    }
+  }
+  return null;
+}
+
+function someoneWon(moves) {
+  return !!getWinner(moves);
+}
+
+function shouldContinue() {
+  let answer;
+  while (true) {
+    print('Do you want to play again? [Y/n]');
+    answer = prompt().toLowerCase();
+    if (answer === '') answer = 'y';
+    if (['y', 'n'].includes(answer[0])) break;
+  }
+  return answer;
 }
 
 while (true) {
-  playerChoosesSquare(board);
-  computerPlays(board);
+  let board = initializeBoard();
+  let moves = {
+    player: [],
+    computer: [],
+  };
+
+  while (true) {
+    displayBoard(board);
+
+    playerChoosesSquare(board, moves);
+    if (boardFull(board) || someoneWon(moves)) break;
+
+    computerPlays(board, moves);
+    displayBoard(board);
+
+    if (boardFull(board) || someoneWon(moves)) break;
+  }
+
   displayBoard(board);
 
-  if (boardFull(board) || someoneWon(board)) break;
-}
+  if (someoneWon(moves)) {
+    print(`${getWinner(moves)} won!`);
+  } else {
+    print("It's a tie!");
+  }
 
-if (someoneWon(board)) {
-  print(`${getWinner(board)} won!`);
-} else {
-  print("It's a tie!");
+  let continuePlaying = shouldContinue();
+  if (continuePlaying === 'n') break;
 }
