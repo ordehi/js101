@@ -15,6 +15,10 @@ const WINNING_LINES = [
   [1, 5, 9],
   [3, 5, 7],
 ];
+const GAMES_TO_WIN_MATCH = 5;
+const POINT_FOR_GAME = 1;
+
+let playerName = '';
 
 function initializeBoard() {
   let newBoard = {};
@@ -27,7 +31,7 @@ function initializeBoard() {
 
 function displayBoard(board) {
   console.clear();
-  print(`You are ${PLAYER_MARKER}. Computer ${COMPUTER_MARKER}`);
+  print(`You are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}`);
   print('');
   print(BOARD_LANE);
   printPlayable(board['1'], board['2'], board['3']);
@@ -59,9 +63,42 @@ function emptySquares(board) {
   return Object.keys(board).filter((square) => board[square] === EMPTY_SQUARE);
 }
 
-function playerChoosesSquare(board, moves) {
+function joinOr(array, separatorChar = ', ', lastSeparatorWord = 'or') {
+  if (array.length === 0) return '';
+  if (array.length === 1) return array.toString();
+  if (array.length === 2) return array.join(` ${lastSeparatorWord} `);
+
+  let arrWithoutLastEl = array.slice(0, array.length - 1);
+  let arrWithLastSeparator = arrWithoutLastEl.concat(lastSeparatorWord);
+  let stringWithLastSeparator = arrWithLastSeparator.join(separatorChar);
+  let stringWithLastElem = stringWithLastSeparator.concat(
+    ` ${array[array.length - 1]}`
+  );
+
+  return stringWithLastElem;
+}
+
+/* Launch's solve to joinOr
+
+function joinOr(arr, delimiter = ', ', word = 'or') {
+  switch (arr.length) {
+    case 0:
+      return '';
+    case 1:
+      return `${arr[0]}`;
+    case 2:
+      return arr.join(` ${word} `);
+    default:
+      return arr.slice(0, arr.length - 1).join(delimiter) +
+             `${delimiter}${word} ${arr[arr.length - 1]}`;
+  }
+}
+
+*/
+
+function playerChoosesSquare(board, moves, playerName = 'Player') {
   let empty = emptySquares(board);
-  print(`Choose a square ${empty.join(', ')}, top-left to bottom-right.`);
+  print(`Choose a square ${joinOr(empty)}, top-left to bottom-right.`);
 
   let playerChoice = prompt();
   while (true) {
@@ -72,7 +109,7 @@ function playerChoosesSquare(board, moves) {
 
   board[playerChoice] = PLAYER_MARKER;
   moves.player.push(Number(playerChoice));
-  print(`Player plays ${playerChoice}`);
+  print(`${playerName} plays ${playerChoice}`);
 }
 
 function computerPlays(board, moves) {
@@ -97,7 +134,7 @@ function winningLineIn(line, moves) {
 function getWinner(moves) {
   for (const line of WINNING_LINES) {
     if (winningLineIn(line, moves.player)) {
-      return 'Player';
+      return playerName;
     } else if (winningLineIn(line, moves.computer)) {
       return 'Computer';
     }
@@ -105,7 +142,7 @@ function getWinner(moves) {
   return null;
 }
 
-function someoneWon(moves) {
+function someoneWonGame(moves) {
   return !!getWinner(moves);
 }
 
@@ -120,33 +157,94 @@ function shouldContinue() {
   return answer;
 }
 
+function getPlayerName() {
+  print("What's your name?");
+  let playerName = prompt();
+  return playerName || 'Player';
+}
+
+function addToScore(scoreCard, winner, points) {
+  let isWinnerPlayer = winner !== 'computer';
+  scoreCard[isWinnerPlayer ? 'player' : winner] += points;
+}
+
+function getMatchWinner(scoreCard) {
+  if (scoreCard.player === GAMES_TO_WIN_MATCH) {
+    return playerName;
+  } else if (scoreCard.computer === GAMES_TO_WIN_MATCH) {
+    return 'Computer';
+  }
+
+  return null;
+}
+
+function someoneWonMatch(scoreCard) {
+  return !!getMatchWinner(scoreCard, playerName);
+}
+
+function getScoreMessage(scoreCard) {
+  return `${playerName} ${scoreCard.player}, Computer ${scoreCard.computer}`;
+}
+
+function initializeMoves() {
+  return { player: [], computer: [] };
+}
+
+function initializeScoreCard() {
+  return { player: 0, computer: 0 };
+}
+
+function announceGameWinner(scoreCard, winner) {
+  print(`${winner} won the game!`);
+  print(`Current match score is ${getScoreMessage(scoreCard)}`);
+}
+
+function announceMatchWinner(scoreCard, matchWinner) {
+  print(`${matchWinner} won the match!`);
+  print(`Final score was ${getScoreMessage(scoreCard)}`);
+}
+
 while (true) {
-  let board = initializeBoard();
-  let moves = {
-    player: [],
-    computer: [],
-  };
+  playerName = getPlayerName();
+  print(`Your name is ${playerName}`);
+
+  let scoreCard = initializeScoreCard();
 
   while (true) {
+    let board = initializeBoard();
+    let moves = initializeMoves();
+
+    while (true) {
+      displayBoard(board);
+
+      playerChoosesSquare(board, moves);
+      if (boardFull(board) || someoneWonGame(moves)) break;
+
+      computerPlays(board, moves);
+      displayBoard(board);
+
+      if (boardFull(board) || someoneWonGame(moves)) break;
+    }
+
     displayBoard(board);
 
-    playerChoosesSquare(board, moves);
-    if (boardFull(board) || someoneWon(moves)) break;
+    if (someoneWonGame(moves)) {
+      let winner = getWinner(moves);
+      addToScore(scoreCard, winner.toLowerCase(), POINT_FOR_GAME);
+      announceGameWinner(scoreCard, winner);
 
-    computerPlays(board, moves);
-    displayBoard(board);
+      if (someoneWonMatch(scoreCard)) {
+        let matchWinner = getMatchWinner(scoreCard);
+        announceMatchWinner(scoreCard, matchWinner);
+        scoreCard = initializeScoreCard();
+      }
+    } else {
+      print("It's a tie!");
+    }
 
-    if (boardFull(board) || someoneWon(moves)) break;
+    let continuePlaying = shouldContinue();
+    if (continuePlaying === 'n') break;
   }
 
-  displayBoard(board);
-
-  if (someoneWon(moves)) {
-    print(`${getWinner(moves)} won!`);
-  } else {
-    print("It's a tie!");
-  }
-
-  let continuePlaying = shouldContinue();
-  if (continuePlaying === 'n') break;
+  break;
 }
