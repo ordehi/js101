@@ -112,6 +112,31 @@ function playerChoosesSquare(board, moves, playerName = 'Player') {
   print(`${playerName} plays ${playerChoice}`);
 }
 
+function findAtRiskSquare(board, moves) {
+  for (const line of WINNING_LINES) {
+    let played = { yes: [], no: [] };
+    line.forEach((square) => {
+      if (moves.player.includes(square) || moves.computer.includes(square)) {
+        played.yes.push(square);
+      } else {
+        played.no.push(square);
+      }
+    });
+
+    if (played.yes.length > 1) {
+      return played.no[0];
+    }
+  }
+
+  WINNING_LINES.forEach((line) => {
+    // check winning lines
+    // current winning line contains this square
+    // if player has a move in any of the other squares in this line
+    //   if the third square is empty
+    //   return third square
+  });
+}
+
 function computerPlays(board, moves) {
   let empty = emptySquares(board);
   let randomEmpty = Math.floor(Math.random() * empty.length);
