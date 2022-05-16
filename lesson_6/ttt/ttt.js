@@ -2,7 +2,7 @@ const rlSync = require('../../node_modules/readline-sync');
 
 const BOARD_LANE = '     |     |';
 const BOARD_LINE = '-----+-----+-----';
-const EMPTY_SQUARE = ' ';
+const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const WINNING_LINES = [
@@ -23,7 +23,7 @@ let playerName = '';
 function initializeBoard() {
   let newBoard = {};
   for (let count = 1; count <= 9; count += 1) {
-    newBoard[count] = EMPTY_SQUARE;
+    newBoard[count] = EMPTY_MARKER;
   }
 
   return newBoard;
@@ -59,8 +59,8 @@ function prompt(cursor = '=>') {
   return rlSync.prompt(`${cursor}`);
 }
 
-function emptySquares(board) {
-  return Object.keys(board).filter((square) => board[square] === EMPTY_SQUARE);
+function getEmptySquares(board) {
+  return Object.keys(board).filter((square) => board[square] === EMPTY_MARKER);
 }
 
 function joinOr(array, separatorChar = ', ', lastSeparatorWord = 'or') {
@@ -97,7 +97,7 @@ function joinOr(arr, delimiter = ', ', word = 'or') {
 */
 
 function playerChoosesSquare(board, moves, playerName = 'Player') {
-  let empty = emptySquares(board);
+  let empty = getEmptySquares(board);
   print(`Choose a square ${joinOr(empty)}, top-left to bottom-right.`);
 
   let playerChoice = prompt();
@@ -112,44 +112,75 @@ function playerChoosesSquare(board, moves, playerName = 'Player') {
   print(`${playerName} plays ${playerChoice}`);
 }
 
-function findAtRiskSquare(board, moves) {
-  for (const line of WINNING_LINES) {
-    let played = { yes: [], no: [] };
-    line.forEach((square) => {
-      if (moves.player.includes(square) || moves.computer.includes(square)) {
-        played.yes.push(square);
-      } else {
-        played.no.push(square);
-      }
-    });
+/* My old solution
+  function findAtRiskSquare(board, moves) {
+  let played = { enemy: [], me: [], none: [] };
 
-    if (played.yes.length > 1) {
-      return played.no[0];
+  for (const line of WINNING_LINES) {
+    for (const square of line) {
+      if (moves.player.includes(square)) {
+        played.enemy.push(square);
+      } else if (moves.computer.includes(square)) {
+        played.me.push(square);
+      } else {
+        played.none.push(square);
+      }
+    }
+
+    if (played.enemy.length === 2 && played.none.length === 1) {
+      break;
+    }
+    played = { enemy: [], me: [], none: [] };
+  }
+  return played.none[0] || null;
+} */
+
+// Launch's solution
+function findAtRiskSquare(line, board, marker) {
+  let markersInLine = line.map((square) => board[square]);
+
+  if (markersInLine.filter((val) => val === marker).length === 2) {
+    let unusedSquare = line.find((square) => board[square] === EMPTY_MARKER);
+    if (unusedSquare !== undefined) {
+      return unusedSquare;
     }
   }
 
-  WINNING_LINES.forEach((line) => {
-    // check winning lines
-    // current winning line contains this square
-    // if player has a move in any of the other squares in this line
-    //   if the third square is empty
-    //   return third square
-  });
+  return null;
+}
+
+function findMove(board, marker) {
+  let move;
+  if (board[5] === EMPTY_MARKER) {
+    move = 5;
+    return move;
+  }
+
+  for (const line of WINNING_LINES) {
+    move = findAtRiskSquare(line, board, marker);
+    if (move) break;
+  }
+
+  return move;
 }
 
 function computerPlays(board, moves) {
-  let empty = emptySquares(board);
-  let randomEmpty = Math.floor(Math.random() * empty.length);
-  let computerChoice = empty[randomEmpty];
+  let computerChoice;
 
-  print(board[computerChoice]);
+  computerChoice = findMove(board, COMPUTER_MARKER);
+  if (!computerChoice) computerChoice = findMove(board, PLAYER_MARKER);
+
+  if (!computerChoice) {
+    let randomIndex = Math.floor(Math.random() * getEmptySquares(board).length);
+    computerChoice = getEmptySquares(board)[randomIndex];
+  }
+
   board[computerChoice] = COMPUTER_MARKER;
   moves.computer.push(Number(computerChoice));
-  print(`Computer plays ${computerChoice}`);
 }
 
 function boardFull(board) {
-  return emptySquares(board).length === 0;
+  return getEmptySquares(board).length === 0;
 }
 
 function winningLineIn(line, moves) {
