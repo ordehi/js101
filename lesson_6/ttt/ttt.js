@@ -206,9 +206,9 @@ function shouldContinue() {
   let answer;
   while (true) {
     print('Do you want to play again? [Y/n]');
-    answer = prompt().toLowerCase();
-    if (answer === '') answer = 'y';
-    if (['y', 'n'].includes(answer[0])) break;
+    answer = prompt();
+    if (['y', 'n', 'yes', 'no'].includes(answer.toLowerCase())) break;
+    print('Not a valid choice.');
   }
   return answer;
 }
@@ -306,7 +306,7 @@ while (true) {
     }
 
     let continuePlaying = shouldContinue();
-    if (continuePlaying === 'n') break;
+    if (['n', 'no'].includes(continuePlaying)) break;
     playerOrder.reverse();
   }
 
