@@ -96,7 +96,7 @@ function joinOr(arr, delimiter = ', ', word = 'or') {
 
 */
 
-function playerChoosesSquare(board, moves, playerName = 'Player') {
+function playerChoosesSquare(board, moves) {
   let empty = getEmptySquares(board);
   print(`Choose a square ${joinOr(empty)}, top-left to bottom-right.`);
 
@@ -260,9 +260,16 @@ function announceMatchWinner(scoreCard, matchWinner) {
   print(`Final score was ${getScoreMessage(scoreCard)}`);
 }
 
+function initPlayFor(player, board, moves) {
+  if (player === 'Computer') return computerPlays(board, moves);
+  return playerChoosesSquare(board, moves);
+}
+
 while (true) {
   playerName = getPlayerName();
   print(`Your name is ${playerName}`);
+
+  let playerOrder = [playerName, 'Computer'];
 
   let scoreCard = initializeScoreCard();
 
@@ -273,12 +280,12 @@ while (true) {
     while (true) {
       displayBoard(board);
 
-      playerChoosesSquare(board, moves);
+      initPlayFor(playerOrder[0], board, moves);
+      displayBoard(board);
       if (boardFull(board) || someoneWonGame(moves)) break;
 
-      computerPlays(board, moves);
+      initPlayFor(playerOrder[1], board, moves);
       displayBoard(board);
-
       if (boardFull(board) || someoneWonGame(moves)) break;
     }
 
@@ -300,6 +307,7 @@ while (true) {
 
     let continuePlaying = shouldContinue();
     if (continuePlaying === 'n') break;
+    playerOrder.reverse();
   }
 
   break;
