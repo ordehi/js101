@@ -265,6 +265,11 @@ function initPlayFor(player, board, moves) {
   return playerChoosesSquare(board, moves);
 }
 
+function alternatePlayer(currentPlayer) {
+  if (currentPlayer === 'Computer') return playerName;
+  return 'Computer';
+}
+
 while (true) {
   playerName = getPlayerName();
   print(`Your name is ${playerName}`);
@@ -276,16 +281,12 @@ while (true) {
   while (true) {
     let board = initializeBoard();
     let moves = initializeMoves();
+    let currentPlayer = playerOrder[0];
 
     while (true) {
       displayBoard(board);
-
-      initPlayFor(playerOrder[0], board, moves);
-      displayBoard(board);
-      if (boardFull(board) || someoneWonGame(moves)) break;
-
-      initPlayFor(playerOrder[1], board, moves);
-      displayBoard(board);
+      initPlayFor(currentPlayer, board, moves);
+      currentPlayer = alternatePlayer(currentPlayer);
       if (boardFull(board) || someoneWonGame(moves)) break;
     }
 
