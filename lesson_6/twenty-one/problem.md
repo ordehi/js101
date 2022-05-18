@@ -14,15 +14,42 @@
 
 ## Data Structure
 
-An object, the properties of which are the names of the suits:
+A nested array where each array element is itself a 2-element array that represents the card's suit and the card's value.
 
-Hearts
-Diamonds
-Clubs
-Spades
+```js
+[
+  ['H', '2'],
+  ['S', 'J'],
+  ['D', 'A'],
+];
+```
 
-The values of each properties will be arrays containing each of the possible 13 card values:
+Both elements in each array will be strings, so no need to worry about whether you get a string or integer.
 
-2, 3, 4, 5, 6, 7, 8, 9, 10, Jack (10), Queen (10), King (10), Ace (1 or 11)
+## Calculating Aces
 
-To select a card randomly, a function will first pick a random suit, then from that suit, pick a random value.
+If totalPlayerCardValue >= 10;
+ace = 11
+else
+ace = 1
+
+## Player Turn
+
+- Ask player to hit or stay.
+- If stay, stop asking.
+- Otherwise, go to #1.
+
+## Shuffle Cards
+
+One good algorithm for shuffling an array is the [Fisher–Yates shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle), which looks like the following in JavaScript:
+
+```js
+function shuffle(array) {
+  for (let index = array.length - 1; index > 0; index--) {
+    let otherIndex = Math.floor(Math.random() * (index + 1)); // 0 to index
+    [array[index], array[otherIndex]] = [array[otherIndex], array[index]]; // swap elements
+  }
+}
+```
+
+## Dealer Turn
