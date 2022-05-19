@@ -26,6 +26,16 @@ A nested array where each array element is itself a 2-element array that represe
 
 Both elements in each array will be strings, so no need to worry about whether you get a string or integer.
 
+H = hearts
+S = spades
+D = diamonds
+C = clubs
+
+J = Jack
+Q = Queen
+K = King
+A = Ace
+
 ## Calculating Aces
 
 If totalPlayerCardValue >= 10;
