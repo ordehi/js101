@@ -1,5 +1,10 @@
 const rlSync = require('../../node_modules/readline-sync');
 
+const SUITS = ['H', 'S', 'D', 'C'];
+const VALUES = [
+  '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A',
+];
+
 function print(message) {
   return console.log('\n' + message);
 }
@@ -9,16 +14,12 @@ function prompt(cursor = '=>') {
 }
 
 function createCards() {
-  let suits = ['H', 'S', 'D', 'C'];
-  let values = [
-    '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A',
-  ];
   let cards = [];
-  suits.forEach((suit) => {
-    values.forEach((value) => cards.push([suit, value]));
+  SUITS.forEach((suit) => {
+    VALUES.forEach((value) => cards.push([suit, value]));
   });
 
-  return cards;
+  return shuffle(cards);
 }
 
 function dealCard(deck) {
@@ -151,7 +152,6 @@ function shouldContinue() {
 while (true) {
   // Initialize deck
   let deck = createCards();
-  shuffle(deck);
 
   // Deal cards to player and dealer
   let dealerHand = [];
